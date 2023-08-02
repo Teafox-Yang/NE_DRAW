@@ -1,0 +1,18 @@
+cmake_minimum_required(VERSION 3.10)
+
+project(NE_DRAW CXX)
+
+
+set(Eigen3_Dir ${CMAKE_CURRENT_LIST_DIR}/eigen/include/eigen3)
+INCLUDE_DIRECTORIES(${Eigen3_Dir})
+# find_package(Eigen3 REQUIRED)
+
+# if((Eigen3_FOUND) AND (DEFINED EIGEN3_INCLUDE_DIR))
+#     message(STATUS "FOUND Eigen3: " ${Eigen3_Dir})
+#     INCLUDE_DIRECTORIES(${EIGEN3_INCLUDE_DIR})
+#     INCLUDE_DIRECTORIES(${Eigen3_Dir})
+# else()
+#     message(FATAL_ERROR "EIGEN3 not found.")
+# endif()
+set_property ( DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT ${PROJECT_NAME} )
+add_executable(${PROJECT_NAME} main.cpp)
