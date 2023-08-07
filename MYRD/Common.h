@@ -216,25 +216,44 @@ struct Vertex
     Vertex() = default;
 
     // Position Vector
-    Vector4f Position;
+    Vector4f position;
 
     // Normal Vector
-    Vector4f Normal;
+    Vector4f normal;
+
+    // Color Vector
+    Vector4f vertexColor;
 
     // Texture Coordinate Vector
-    Vector2f TextureCoordinate;
+    Vector2f textureCoordinate;
 };
 
 struct Triangle
 {
-    Vertex v[3];
-
     Triangle() = default;
     void setVertex(int index, Vertex ver)
     {
         v[index] = ver;
     }
+
+    Vertex v[3];
 };
+
+struct Light
+{
+    Light() = default;
+    Light(const Vector4f& pos, const Vector4f& inten) :
+        position(pos), intensity(inten) {};
+    Vector4f position;
+    Vector4f intensity;
+};
+
+
+// Vector2 Multiplication Opertor Overload
+Vector2f operator*(const float& left, const Vector2f& right)
+{
+    return Vector2f(right.X * left, right.Y * left);
+}
 
 // Vector4 Multiplication Opertor Overload
 Vector4f operator*(const float& left, const Vector4f& right)
@@ -295,11 +314,11 @@ namespace math
     }
 
     // Get the BitColor from a (0,1) rgb color
-    BITCOLOR getBitColor(float r, float g, float b)
+    BITCOLOR getBitColor(Vector4f rgba)
     {
-        int R = (int)(r * 255.0f);
-        int G = (int)(g * 255.0f);
-        int B = (int)(b * 255.0f);
+        int R = (int)(rgba.X * 255.0f);
+        int G = (int)(rgba.Y * 255.0f);
+        int B = (int)(rgba.Z * 255.0f);
         R = clamp(R, 0, 255);
         G = clamp(G, 0, 255);
         B = clamp(B, 0, 255);
@@ -405,17 +424,17 @@ namespace algorithm
         return view;
     }
 
-    // Generate the Projection matrix
+    // Generate the Projection matrix Z[0,1] version
     Matrix4f GetProjection(float fovy, float aspect, float near, float far, Handness::Enum handness) {
-        const float height = 1.0f / tan(math::toRad(fovy) * 0.5f);
-        const float width = height / aspect;
+        const float a = 1.0f / tan(math::toRad(fovy) * 0.5f);
+        const float b = a / aspect;
         const float diff = far - near;
 
         float fax = 1.0f / (float)tan(fovy * 0.5f);
         Matrix4f projection;
 
-        projection.matrix[0][0] = width;
-        projection.matrix[1][1] = height;
+        projection.matrix[0][0] = b;
+        projection.matrix[1][1] = a;
         projection.matrix[2][2] = (Handness::Right == handness) ? -far / diff : far / diff;
         projection.matrix[2][3] = -near * far / diff;
         projection.matrix[3][2] = (Handness::Right == handness) ? -1.0f : 1.0f;

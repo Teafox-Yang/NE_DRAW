@@ -1,6 +1,8 @@
 #pragma once
 
 #include "Common.h"
+#include "Shader.h"
+#include <functional>
 #include <vector>
 
 using namespace std;
@@ -25,17 +27,20 @@ class Rasterizer
 	void setProjection(const Matrix4f& p);
 
 	int getIndex(int x, int y);
-	void setDepth();
-	void setPixel();
+	void setDepth(int x, int y, float depth);
+	void setPixel(int x, int y, BITCOLOR color);
 	void clear(Buffers buffer);
 
-	void draw(const vector<Triangle> &triangleList);
+	void draw(vector<Triangle> &triangleList);
 
 
 private:
 	Matrix4f _model;
 	Matrix4f _view;
 	Matrix4f _projection;
+
+	function<Vector4f(PixelShaderVarying)> pixelShader;
+	function<Vertex(Vertex)> vertexShader;
 
 	vector<BITCOLOR> _frameBuffer;
 	vector<float> _depthBuffer;
@@ -44,7 +49,7 @@ private:
 
 	int _width, _height;
 
-	void rasterizeTriangle(const Triangle& t);
+	void rasterizeTriangle(const Triangle& tri, const Vector4f* viewPos);
 
 };
 

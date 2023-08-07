@@ -1,2 +1,16 @@
-﻿  MYRD.cpp
+﻿  Rasterizer.cpp
+C:\Users\yangqixuan\Documents\GitProjects\MYRD\MYRD\Common.h(288,25): warning C4244: 'return': conversion from 'double' to 'float', possible loss of data
+C:\Users\yangqixuan\Documents\GitProjects\MYRD\MYRD\Common.h(303,19): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\yangqixuan\Documents\GitProjects\MYRD\MYRD\Common.h(303,18): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+C:\Users\yangqixuan\Documents\GitProjects\MYRD\MYRD\Common.h(304,19): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\yangqixuan\Documents\GitProjects\MYRD\MYRD\Common.h(304,18): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+C:\Users\yangqixuan\Documents\GitProjects\MYRD\MYRD\Common.h(305,19): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\yangqixuan\Documents\GitProjects\MYRD\MYRD\Common.h(305,18): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+C:\Users\yangqixuan\Documents\GitProjects\MYRD\MYRD\Common.h(353,22): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\yangqixuan\Documents\GitProjects\MYRD\MYRD\Common.h(361,42): warning C4244: 'argument': conversion from 'double' to 'const float', possible loss of data
+C:\Users\yangqixuan\Documents\GitProjects\MYRD\MYRD\Common.h(361,67): warning C4244: 'argument': conversion from 'double' to 'const float', possible loss of data
+C:\Users\yangqixuan\Documents\GitProjects\MYRD\MYRD\Common.h(410,35): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\yangqixuan\Documents\GitProjects\MYRD\MYRD\Common.h(410,28): warning C4244: 'initializing': conversion from 'double' to 'const float', possible loss of data
+C:\Users\yangqixuan\Documents\GitProjects\MYRD\MYRD\Rasterizer.cpp(44,27): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\yangqixuan\Documents\GitProjects\MYRD\MYRD\Rasterizer.cpp(44,24): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
   MYRD.vcxproj -> C:\Users\yangqixuan\Documents\GitProjects\MYRD\x64\Debug\MYRD.exe
