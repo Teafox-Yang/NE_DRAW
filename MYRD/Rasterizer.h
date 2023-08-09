@@ -20,7 +20,8 @@ enum class Buffers
 };
 class Rasterizer
 {
-	Rasterizer(int width, int height);
+public:
+	Rasterizer(int width, int height, unsigned char* fb);
 
 	void setModel(const Matrix4f& m);
 	void setView(const Matrix4f& v);
@@ -28,10 +29,12 @@ class Rasterizer
 
 	int getIndex(int x, int y);
 	void setDepth(int x, int y, float depth);
-	void setPixel(int x, int y, BITCOLOR color);
+	void setPixel(int x, int y, BYTECOLOR color);
 	void clear(Buffers buffer);
 
-	void draw(vector<Triangle> &triangleList);
+	void setPixelShader(std::function<Vector4f(PixelShaderVarying)> pixelShader);
+
+	void drawPrimitives(vector<Triangle>& triangleList);
 
 
 private:
@@ -39,17 +42,17 @@ private:
 	Matrix4f _view;
 	Matrix4f _projection;
 
-	function<Vector4f(PixelShaderVarying)> pixelShader;
-	function<Vertex(Vertex)> vertexShader;
+	function<Vector4f(PixelShaderVarying)> _pixelShader;
+	function<Vertex(Vertex)> _vertexShader;
 
-	vector<BITCOLOR> _frameBuffer;
+	BYTECOLOR* _frameBuffer;
 	vector<float> _depthBuffer;
 
-	BITCOLOR _backgroundColor = BITCOLOR(0);
+	BYTECOLOR _backgroundColor = BYTECOLOR(0);
 
 	int _width, _height;
 
-	void rasterizeTriangle(const Triangle& tri, const Vector4f* viewPos);
+	void rasterizeTriangle(const Triangle& tri, const vector<Vector4f>& viewPos);
 
 };
 

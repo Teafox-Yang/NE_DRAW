@@ -1,180 +1,85 @@
-// MYRD.cpp : Defines the entry point for the application.
-//
+#include "Rasterizer.h"
+#include "Screen.h"
+#include <tchar.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <assert.h>
 
-#include "framework.h"
-#include "MYRD.h"
+Vector4f blue(0.0f, 0.0f, 1.0f), red(1.0f, 0.0f, 0.0f), green(0.0f, 1.0f, 0.0f);
+Vector4f white(1.0f), black(0.0f), gray(0.8f, 0.8f, 0.8f);
 
-#define MAX_LOADSTRING 100
+Vertex vertexBuffer[8] = {
+	{{-1.0f,-1.0f,1.0f},{},gray,{0,0}},
+	{{1.0f,-1.0f,1.0f},{},gray,{0,1}},
+	{{1.0f,1.0f,1.0f},{},blue,{1,1}},
+	{{-1.0f,1.0f,1.0f},{},blue,{1,0}},
 
-// Global Variables:
-HINSTANCE hInst;                                // current instance
-WCHAR szTitle[MAX_LOADSTRING];                  // The title bar text
-WCHAR szWindowClass[MAX_LOADSTRING];            // the main window class name
+	{{-1.0f,-1.0f,-1.0f},{},gray,{0,0}},
+	{{1.0f,-1.0f,-1.0f},{},gray,{0,1}},
+	{{1.0f,1.0f,-1.0f},{},blue,{1,1}},
+	{{-1.0f,1.0f,-1.0f},{},blue,{1,0}},
+};
 
-// Forward declarations of functions included in this code module:
-ATOM                MyRegisterClass(HINSTANCE hInstance);
-BOOL                InitInstance(HINSTANCE, int);
-LRESULT CALLBACK    WndProc(HWND, UINT, WPARAM, LPARAM);
-INT_PTR CALLBACK    About(HWND, UINT, WPARAM, LPARAM);
-
-int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
-                     _In_opt_ HINSTANCE hPrevInstance,
-                     _In_ LPWSTR    lpCmdLine,
-                     _In_ int       nCmdShow)
+vector<Triangle> triList =
 {
-    UNREFERENCED_PARAMETER(hPrevInstance);
-    UNREFERENCED_PARAMETER(lpCmdLine);
+	GetTriangle(vertexBuffer,0,1,2),
+	GetTriangle(vertexBuffer,2,3,0),
 
-    // TODO: Place code here.
+	GetTriangle(vertexBuffer,6,5,4),
+	GetTriangle(vertexBuffer,4,7,6),
 
-    // Initialize global strings
-    LoadStringW(hInstance, IDS_APP_TITLE, szTitle, MAX_LOADSTRING);
-    LoadStringW(hInstance, IDC_MYRD, szWindowClass, MAX_LOADSTRING);
-    MyRegisterClass(hInstance);
+	GetTriangle(vertexBuffer,1,5,6),
+	GetTriangle(vertexBuffer,6,2,1),
 
-    // Perform application initialization:
-    if (!InitInstance (hInstance, nCmdShow))
-    {
-        return FALSE;
-    }
+	GetTriangle(vertexBuffer,7,4,0),
+	GetTriangle(vertexBuffer,0,3,7),
 
-    HACCEL hAccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_MYRD));
+	GetTriangle(vertexBuffer,2,6,7),
+	GetTriangle(vertexBuffer,7,3,2),
 
-    MSG msg;
+	GetTriangle(vertexBuffer,4,5,1),
+	GetTriangle(vertexBuffer,1,0,4),
+};
 
-    // Main message loop:
-    while (GetMessage(&msg, nullptr, 0, 0))
-    {
-        if (!TranslateAccelerator(msg.hwnd, hAccelTable, &msg))
-        {
-            TranslateMessage(&msg);
-            DispatchMessage(&msg);
-        }
-    }
-
-    return (int) msg.wParam;
-}
-
-
-
-//
-//  FUNCTION: MyRegisterClass()
-//
-//  PURPOSE: Registers the window class.
-//
-ATOM MyRegisterClass(HINSTANCE hInstance)
+int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
+	PSTR lpCmdLine, int nCmdShow)
 {
-    WNDCLASSEXW wcex;
+	int width = 800;
+	int height = 600;
 
-    wcex.cbSize = sizeof(WNDCLASSEX);
+	float alpha = 1;
+	float pos = 3.0;
+	const TCHAR* title = _T("MYRD (software render) - ")
+		_T("Left/Right: rotation, Up/Down: forward/backward");
 
-    wcex.style          = CS_HREDRAW | CS_VREDRAW;
-    wcex.lpfnWndProc    = WndProc;
-    wcex.cbClsExtra     = 0;
-    wcex.cbWndExtra     = 0;
-    wcex.hInstance      = hInstance;
-    wcex.hIcon          = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_MYRD));
-    wcex.hCursor        = LoadCursor(nullptr, IDC_ARROW);
-    wcex.hbrBackground  = (HBRUSH)(COLOR_WINDOW+1);
-    wcex.lpszMenuName   = MAKEINTRESOURCEW(IDC_MYRD);
-    wcex.lpszClassName  = szWindowClass;
-    wcex.hIconSm        = LoadIcon(wcex.hInstance, MAKEINTRESOURCE(IDI_SMALL));
 
-    return RegisterClassExW(&wcex);
-}
+	if (screen_init(width, height, title))
+		return -1;
 
-//
-//   FUNCTION: InitInstance(HINSTANCE, int)
-//
-//   PURPOSE: Saves instance handle and creates main window
-//
-//   COMMENTS:
-//
-//        In this function, we save the instance handle in a global variable and
-//        create and display the main program window.
-//
-BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
-{
-   hInst = hInstance; // Store instance handle in our global variable
+	//initialize rasterizer device
+	Rasterizer rasDevice(width, height, screen_fb);
+	Vector4f eye(pos, pos,0.0f), at(0.0f, 0.0f, 0.0f), up(0.0f, 1.0f, 0.0f);
+	rasDevice.setModel(algorithm::GetIdentity());
+	rasDevice.setView(algorithm::GetView(eye, at, up, Handness::Left));
+    rasDevice.setProjection(algorithm::GetProjection(90, (float)width / height, 1.0f, 500.0f, Handness::Left));
 
-   HWND hWnd = CreateWindowW(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW,
-      CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, nullptr, nullptr, hInstance, nullptr);
 
-   if (!hWnd)
-   {
-      return FALSE;
-   }
+	while (screen_exit == 0 && screen_keys[VK_ESCAPE] == 0) {
+		screen_dispatch();
+		rasDevice.clear(Buffers::Frame);
+		rasDevice.clear(Buffers::Depth);
+		rasDevice.setView(algorithm::GetView(eye, at, up, Handness::Left));
+		rasDevice.setPixelShader(PhongPixelShader);
+		Matrix4f rotation = algorithm::GetRotation(Vector4f(0.0f, 1.0f, 0.0f), alpha);
+		rasDevice.setModel(rotation);
+		if (screen_keys[VK_UP]) eye.X -= 0.01f;
+		if (screen_keys[VK_DOWN]) eye.X += 0.01f;
+		if (screen_keys[VK_LEFT]) alpha += 1.0f;
+		if (screen_keys[VK_RIGHT]) alpha -= 1.0f;
 
-   ShowWindow(hWnd, nCmdShow);
-   UpdateWindow(hWnd);
-
-   return TRUE;
-}
-
-//
-//  FUNCTION: WndProc(HWND, UINT, WPARAM, LPARAM)
-//
-//  PURPOSE: Processes messages for the main window.
-//
-//  WM_COMMAND  - process the application menu
-//  WM_PAINT    - Paint the main window
-//  WM_DESTROY  - post a quit message and return
-//
-//
-LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
-{
-    switch (message)
-    {
-    case WM_COMMAND:
-        {
-            int wmId = LOWORD(wParam);
-            // Parse the menu selections:
-            switch (wmId)
-            {
-            case IDM_ABOUT:
-                DialogBox(hInst, MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, About);
-                break;
-            case IDM_EXIT:
-                DestroyWindow(hWnd);
-                break;
-            default:
-                return DefWindowProc(hWnd, message, wParam, lParam);
-            }
-        }
-        break;
-    case WM_PAINT:
-        {
-            PAINTSTRUCT ps;
-            HDC hdc = BeginPaint(hWnd, &ps);
-            // TODO: Add any drawing code that uses hdc here...
-            EndPaint(hWnd, &ps);
-        }
-        break;
-    case WM_DESTROY:
-        PostQuitMessage(0);
-        break;
-    default:
-        return DefWindowProc(hWnd, message, wParam, lParam);
-    }
-    return 0;
-}
-
-// Message handler for about box.
-INT_PTR CALLBACK About(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
-{
-    UNREFERENCED_PARAMETER(lParam);
-    switch (message)
-    {
-    case WM_INITDIALOG:
-        return (INT_PTR)TRUE;
-
-    case WM_COMMAND:
-        if (LOWORD(wParam) == IDOK || LOWORD(wParam) == IDCANCEL)
-        {
-            EndDialog(hDlg, LOWORD(wParam));
-            return (INT_PTR)TRUE;
-        }
-        break;
-    }
-    return (INT_PTR)FALSE;
+		rasDevice.drawPrimitives(triList);
+		screen_update();
+		Sleep(1);
+	}
+	return 0;
 }

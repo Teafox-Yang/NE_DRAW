@@ -1,9 +1,9 @@
 #pragma once
-#pragma once
 
 #include <math.h>
+#include <functional>
 
-typedef unsigned int BITCOLOR;
+typedef unsigned int BYTECOLOR;
 #define PI 3.141592654
 #define TWO_PI (2.0* MY_PI)
 
@@ -211,6 +211,62 @@ struct Matrix4f
     float matrix[4][4] = { 0 };
 };
 
+namespace math
+{
+    // Vector Cross Product
+    static Vector4f Cross(const Vector4f& a, const Vector4f& b)
+    {
+        return Vector4f(a.Y * b.Z - a.Z * b.Y,
+            a.Z * b.X - a.X * b.Z,
+            a.X * b.Y - a.Y * b.X);
+    }
+
+    // Vector Dot Product
+    static float Dot(const Vector4f& a, const Vector4f& b)
+    {
+        return (a.X * b.X) + (a.Y * b.Y) + (a.Z * b.Z);
+    }
+
+    // Vector4 Magnitude Calculation
+    static float Magnitude(const Vector4f& a)
+    {
+        return(sqrtf(powf(a.X, 2) + powf(a.Y, 2) + powf(a.Z, 2)));
+    }
+
+    // Normalize the Vector4
+    static Vector4f Normalize(const Vector4f& in)
+    {
+        float length = math::Magnitude(in);
+        return in / length;
+    }
+
+    // Degree to Rad
+    static inline float toRad(float deg)
+    {
+        return deg * PI / 180.0f;
+    }
+
+    // Clamp function
+    static inline float clamp(float x, float min, float max)
+    {
+        return (x < min) ? min : ((x > max) ? max : x);
+    }
+
+
+    // Get the BitColor from a (0,1) rgb color
+    static BYTECOLOR getBitColor(Vector4f rgba)
+    {
+        int R = (int)(rgba.X * 255.0f);
+        int G = (int)(rgba.Y * 255.0f);
+        int B = (int)(rgba.Z * 255.0f);
+        R = clamp(R, 0, 255);
+        G = clamp(G, 0, 255);
+        B = clamp(B, 0, 255);
+
+        return (R << 16) | (G << 8) | (B);
+    }
+}
+
 struct Vertex
 {
     Vertex() = default;
@@ -231,13 +287,40 @@ struct Vertex
 struct Triangle
 {
     Triangle() = default;
+
+    Triangle(const Vertex& a, const Vertex& b, const Vertex& c)
+    {
+        Vector4f triNormal = getTriNormal(a.position, b.position, c.position);
+        v[0] = a;
+        v[1] = b;
+        v[2] = c;
+        v[0].normal = triNormal;
+        v[1].normal = triNormal;
+        v[2].normal = triNormal;
+    }
+    
+    Vector4f getTriNormal(Vector4f a, Vector4f b, Vector4f c)
+    {
+        Vector4f AB = b - a;
+        Vector4f AC = c - a;
+        Vector4f normal = math::Normalize(math::Cross(AB, AC));
+        return normal;
+    }
+
     void setVertex(int index, Vertex ver)
     {
         v[index] = ver;
     }
-
+    //Vertex Array
     Vertex v[3];
+
 };
+
+// construct Triangle from given vertexbuffer
+static Triangle GetTriangle(const Vertex* vertex, int a, int b, int c)
+{
+    return Triangle(vertex[a], vertex[b], vertex[c]);
+}
 
 struct Light
 {
@@ -250,19 +333,19 @@ struct Light
 
 
 // Vector2 Multiplication Opertor Overload
-Vector2f operator*(const float& left, const Vector2f& right)
+static Vector2f operator*(const float& left, const Vector2f& right)
 {
     return Vector2f(right.X * left, right.Y * left);
 }
 
 // Vector4 Multiplication Opertor Overload
-Vector4f operator*(const float& left, const Vector4f& right)
+static Vector4f operator*(const float& left, const Vector4f& right)
 {
     return Vector4f(right.X * left, right.Y * left, right.Z * left);
 }
 
 // Matrix Vector4 Multiplication Opertor Overload
-Vector4f operator*(const Matrix4f& m, const Vector4f& v)
+static Vector4f operator*(const Matrix4f& m, const Vector4f& v)
 {
     Vector4f result;
     result.X = m.matrix[0][0] * v.X + m.matrix[0][1] * v.Y + m.matrix[0][2] * v.Z + m.matrix[0][3] * v.W;
@@ -272,85 +355,46 @@ Vector4f operator*(const Matrix4f& m, const Vector4f& v)
     return result;
 }
 
-namespace math
-{
-    // Vector Cross Product
-    Vector4f Cross(const Vector4f& a, const Vector4f& b)
-    {
-        return Vector4f(a.Y * b.Z - a.Z * b.Y,
-            a.Z * b.X - a.X * b.Z,
-            a.X * b.Y - a.Y * b.X);
-    }
 
-    // Vector Dot Product
-    float Dot(const Vector4f& a, const Vector4f& b)
-    {
-        return (a.X * b.X) + (a.Y * b.Y) + (a.Z * b.Z);
-    }
-
-    // Vector4 Magnitude Calculation
-    float Magnitude(const Vector4f& a)
-    {
-        return(sqrtf(powf(a.X, 2) + powf(a.Y, 2) + powf(a.Z, 2)));
-    }
-
-    // Normalize the Vector4
-    Vector4f Normalize(const Vector4f& in)
-    {
-        float length = math::Magnitude(in);
-        return in / length;
-    }
-
-    // Degree to Rad
-    inline float toRad(float deg)
-    {
-        return deg * PI / 180.0f;
-    }
-
-    // Clamp function
-    inline float clamp(float x, float min, float max)
-    {
-        return (x < min) ? min : ((x > max) ? max : x);
-    }
-
-    // Get the BitColor from a (0,1) rgb color
-    BITCOLOR getBitColor(Vector4f rgba)
-    {
-        int R = (int)(rgba.X * 255.0f);
-        int G = (int)(rgba.Y * 255.0f);
-        int B = (int)(rgba.Z * 255.0f);
-        R = clamp(R, 0, 255);
-        G = clamp(G, 0, 255);
-        B = clamp(B, 0, 255);
-
-        return (R << 16) | (G << 8) | (B);
-    }
-
-    // Projection Calculation of a onto b
-    Vector4f ProjV3(const Vector4f& a, const Vector4f& b)
-    {
-        Vector4f bn = b / Magnitude(b);
-        return bn * Dot(a, bn);
-    }
-}
 
 namespace algorithm
 {
 
     // A test to see if P1 is on the same side as P2 of a line segment ab
-    bool SameSide(Vector4f p1, Vector4f p2, Vector4f a, Vector4f b)
+    static bool SameSide(Vector2f p1, Vector2f p2, Vector2f a, Vector2f b)
     {
-        Vector4f cp1 = math::Cross(b - a, p1 - a);
-        Vector4f cp2 = math::Cross(b - a, p2 - a);
-
-        if (math::Dot(cp1, cp2) >= 0)
+        float cp1 = (b - a).X * (p1 - a).Y - (b - a).Y * (p1 - a).X;
+        float cp2 = (b - a).X * (p2 - a).Y - (b - a).Y * (p2 - a).X;
+        if (cp1 * cp2 >= 0)
             return true;
         else
             return false;
     }
 
+    // is the point on the right side of each edge(clockwize)
+    static bool insideTriangle(float x, float y, const Vertex* v)
+    {
+        Vector2f P = Vector2f(x, y);
+        Vector2f A = Vector2f(v[0].position.X, v[0].position.Y);
+        Vector2f B = Vector2f(v[1].position.X, v[1].position.Y);
+        Vector2f C = Vector2f(v[2].position.X, v[2].position.Y);
+
+        return SameSide(P, A, B, C)
+            && SameSide(P, B, C, A)
+            && SameSide(P, C, A, B);
+    }
+
+    // get the BaryCentric weight of each vertex
+    static std::tuple<float, float, float>computeBaryCentric(float x, float y, const Vector4f* v)
+    {
+        float alpha = (x * (v[1].Y - v[2].Y) + (v[2].X - v[1].X) * y + v[1].X * v[2].Y - v[2].X * v[1].Y) / (v[0].X * (v[1].Y - v[2].Y) + (v[2].X - v[1].X) * v[0].Y + v[1].X * v[2].Y - v[2].X * v[1].Y);
+        float beta = (x * (v[2].Y - v[0].Y) + (v[0].X - v[2].X) * y + v[2].X * v[0].Y - v[0].X * v[2].Y) / (v[1].X * (v[2].Y - v[0].Y) + (v[0].X - v[2].X) * v[1].Y + v[2].X * v[0].Y - v[0].X * v[2].Y);
+        float gamma = (x * (v[0].Y - v[1].Y) + (v[1].X - v[0].X) * y + v[0].X * v[1].Y - v[1].X * v[0].Y) / (v[2].X * (v[0].Y - v[1].Y) + (v[1].X - v[0].X) * v[2].Y + v[0].X * v[1].Y - v[1].X * v[0].Y);
+        return { alpha, beta, gamma };
+    }
+
     // Get an identity Matrix4x4
-    Matrix4f GetIdentity()
+    static Matrix4f GetIdentity()
     {
         Matrix4f result;
         result.matrix[0][0] = result.matrix[1][1] = result.matrix[2][2] = result.matrix[3][3] = 1.0f;
@@ -358,7 +402,7 @@ namespace algorithm
     }
 
     // Generate a cross produect normal for a triangle
-    Vector4f GenTriNormal(const Vector4f& t1, const Vector4f& t2, const Vector4f& t3)
+    static Vector4f GenTriNormal(const Vector4f& t1, const Vector4f& t2, const Vector4f& t3)
     {
         Vector4f u = t2 - t1;
         Vector4f v = t3 - t1;
@@ -367,7 +411,7 @@ namespace algorithm
     }
 
     // Generate the rotation matrix from Rodrigues' rotation formula
-    Matrix4f GetRotation(const Vector4f& axis, const float angle)
+    static Matrix4f GetRotation(const Vector4f& axis, const float angle)
     {
         float radian = angle * PI / 180.0;
         float temp[16] = { 0,-axis.Z, axis.Y,0,
@@ -383,7 +427,7 @@ namespace algorithm
     }
 
     // Generate the translation matrix
-    Matrix4f GetTranslation(const float x, const float y, const float z)
+    static Matrix4f GetTranslation(const float x, const float y, const float z)
     {
         Matrix4f translation = GetIdentity();
         translation.matrix[0][3] = x;
@@ -393,7 +437,7 @@ namespace algorithm
     }
 
     // Generate the View matrix
-    Matrix4f GetView(const Vector4f& eye, const Vector4f& target, const Vector4f& up, Handness::Enum handness)
+    static Matrix4f GetView(const Vector4f& eye, const Vector4f& target, const Vector4f& up, Handness::Enum handness)
     {
         Vector4f xAxis, yAxis, zAxis;
         zAxis = math::Normalize(Handness::Right == handness ? (eye - target) : (target - eye));
@@ -425,7 +469,7 @@ namespace algorithm
     }
 
     // Generate the Projection matrix Z[0,1] version
-    Matrix4f GetProjection(float fovy, float aspect, float near, float far, Handness::Enum handness) {
+    static Matrix4f GetProjection(float fovy, float aspect, float near, float far, Handness::Enum handness) {
         const float a = 1.0f / tan(math::toRad(fovy) * 0.5f);
         const float b = a / aspect;
         const float diff = far - near;
@@ -442,3 +486,4 @@ namespace algorithm
         return projection;
     }
 }
+
