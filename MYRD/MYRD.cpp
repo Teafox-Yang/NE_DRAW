@@ -78,7 +78,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 		if (screen_keys[VK_LEFT]) alpha += 1.0f;
 		if (screen_keys[VK_RIGHT]) alpha -= 1.0f;
 
-		rasDevice.drawTriangles(triList);
+		rasDevice.drawPlanes(triList);
 		screen_update();
 		Sleep(1);
 	}

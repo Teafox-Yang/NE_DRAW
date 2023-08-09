@@ -60,22 +60,71 @@ void Rasterizer::clear(Buffers buffer)
 		fill(_depthBuffer.begin(), _depthBuffer.end(), numeric_limits<float>::infinity());
 }
 
-
-void Rasterizer::drawTriangles(vector<Triangle>& triangleList)
+void Rasterizer::drawPlanes(vector<Triangle>& triangleList)
 {
 	Matrix4f mv = _view * _model;
 	Matrix4f mvp = _projection * mv;
 	int count = 0;
 
+	for (const auto& t : triangleList)
+	{
+		Triangle tri = t;
+
+		//for perspective adjustment and lighting
+		vector<Vector4f> viewspacePos(3);
+
+		viewspacePos[0] = mv * t.v[0].position;
+		viewspacePos[1] = mv * t.v[1].position;
+		viewspacePos[2] = mv * t.v[2].position;
+		Vector4f viewNormal;
+
+		// view space normal
+		if (++count % 2 == 0)
+		{
+			viewNormal = algorithm::getTriNormal(viewspacePos[2], viewspacePos[1], viewspacePos[0]);
+			count = 0;
+		}
+		else
+		{
+			viewNormal = algorithm::getTriNormal(viewspacePos[0], viewspacePos[1], viewspacePos[2]);
+		}
+		Vector4f viewDir = viewspacePos[0];
+		// back culling
+		if (math::Dot(viewNormal, viewDir) < 0.0f)
+		{
+			tri.v[0].normal = viewNormal;
+			tri.v[1].normal = viewNormal;
+			tri.v[2].normal = viewNormal;
+
+			// mvp transformation
+			tri.v[0].position = mvp * t.v[0].position;
+			tri.v[1].position = mvp * t.v[1].position;
+			tri.v[2].position = mvp * t.v[2].position;
+			// Homogeneous division
+			tri.v[0].position.Homogeneous();
+			tri.v[1].position.Homogeneous();
+			tri.v[2].position.Homogeneous();
+			// Viewprot transformaton
+			for (auto& vert : tri.v)
+			{
+				vert.position.X = 0.5 * _width * (vert.position.X + 1.0f);
+				vert.position.Y = 0.5 * _height * (vert.position.Y + 1.0f);
+			}
+
+			rasterizeTriangle(tri, viewspacePos);
+		}
+	}
+}
+
+
+void Rasterizer::drawTriangles(vector<Triangle>& triangleList)
+{
+	Matrix4f mv = _view * _model;
+	Matrix4f mvp = _projection * mv;
 
 	for (const auto& t : triangleList)
 	{
-		count++;
 		Triangle tri = t;
-
-		/*tri.v[0] = vertexShader(t.v[0]);
-		tri.v[1] = vertexShader(t.v[1]);
-		tri.v[2] = vertexShader(t.v[2]);*/
 
 		//for perspective adjustment
 		vector<Vector4f> viewspacePos(3);
@@ -86,14 +135,8 @@ void Rasterizer::drawTriangles(vector<Triangle>& triangleList)
 		Vector4f viewNormal;
 
 		// view space normal
-		if (count % 2 == 0)
-		{
-			viewNormal = algorithm::getTriNormal(viewspacePos[2], viewspacePos[1], viewspacePos[0]);
-		}
-		else
-		{
-			viewNormal = algorithm::getTriNormal(viewspacePos[0], viewspacePos[1], viewspacePos[2]);
-		}
+
+		viewNormal = algorithm::getTriNormal(viewspacePos[0], viewspacePos[1], viewspacePos[2]);
 		Vector4f viewDir = viewspacePos[0];
 		// back culling
 		if (math::Dot(viewNormal,viewDir) < 0.0f)
