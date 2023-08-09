@@ -37,7 +37,7 @@ static Vector4f PhongPixelShader(const PixelShaderVarying& pixelData)
 	Light l1 = Light(Vector4f(10.0f), Vector4f(500.0f));
 	Light l2 = Light(Vector4f(-20.0f, 20.0f, 0.0f), Vector4f(500.0f));
 
-	vector<Light> lights = { l1};
+	vector<Light> lights = { l1,l2};
 
 	float ambientIntensity = 10.0f;
 	Vector4f eyePos = Vector4f(0, 0, 0);
@@ -75,28 +75,4 @@ static Vector4f PhongPixelShader(const PixelShaderVarying& pixelData)
 	return resultColor;
 }
 
-static Vector4f LambertPixelShader(const PixelShaderVarying& pixelData)
-{
-	Vector4f normal = pixelData.normal;
-	Vector4f lightDir = (1, 3, 1);
-	float nDotL = math::Dot(normal, math::Normalize(lightDir));
-	Vector4f kd = pixelData.color;
-	float lambert = math::clamp(nDotL, 0.0f, 1.0f);
-	return Vector4f(kd * lambert);
 
-}
-
-static Vector4f BlinnPhongPixelShader(const PixelShaderVarying& pixelData)
-{
-	Vector4f normal = pixelData.normal;
-	Vector4f viewPos = pixelData.viewPos;
-	Vector4f lightPos = (5, 10, 5);
-
-	Vector4f lightDir = math::Normalize(lightPos - viewPos);
-	float nDotL = math::Dot(normal, math::Normalize(lightDir));
-
-	Vector4f kd = pixelData.color;
-	float lambert = math::clamp(nDotL, 0.0f, 1.0f);
-	return Vector4f(kd * lambert);
-
-}

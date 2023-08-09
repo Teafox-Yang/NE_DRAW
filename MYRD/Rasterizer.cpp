@@ -61,13 +61,16 @@ void Rasterizer::clear(Buffers buffer)
 }
 
 
-void Rasterizer::drawPrimitives(vector<Triangle>& triangleList)
+void Rasterizer::drawTriangles(vector<Triangle>& triangleList)
 {
 	Matrix4f mv = _view * _model;
 	Matrix4f mvp = _projection * mv;
+	int count = 0;
+
 
 	for (const auto& t : triangleList)
 	{
+		count++;
 		Triangle tri = t;
 
 		/*tri.v[0] = vertexShader(t.v[0]);
@@ -80,29 +83,42 @@ void Rasterizer::drawPrimitives(vector<Triangle>& triangleList)
 		viewspacePos[0] = mv * t.v[0].position;
 		viewspacePos[1] = mv * t.v[1].position;
 		viewspacePos[2] = mv * t.v[2].position;
+		Vector4f viewNormal;
 
 		// view space normal
-		Vector4f viewNormal = math::Normalize(mv * t.v[0].normal);
-		tri.v[0].normal = viewNormal;
-		tri.v[1].normal = viewNormal;
-		tri.v[2].normal = viewNormal;
-
-		// mvp transformation
-		tri.v[0].position = mvp * t.v[0].position;
-		tri.v[1].position = mvp * t.v[1].position;
-		tri.v[2].position = mvp * t.v[2].position;
-		// Homogeneous division
-		tri.v[0].position.Homogeneous();
-		tri.v[1].position.Homogeneous();
-		tri.v[2].position.Homogeneous();
-		// Viewprot transformaton
-		for (auto& vert : tri.v)
+		if (count % 2 == 0)
 		{
-			vert.position.X = 0.5 * _width * (vert.position.X + 1.0f);
-			vert.position.Y = 0.5 * _height * (vert.position.Y + 1.0f);
+			viewNormal = algorithm::getTriNormal(viewspacePos[2], viewspacePos[1], viewspacePos[0]);
 		}
+		else
+		{
+			viewNormal = algorithm::getTriNormal(viewspacePos[0], viewspacePos[1], viewspacePos[2]);
+		}
+		Vector4f viewDir = viewspacePos[0];
+		// back culling
+		if (math::Dot(viewNormal,viewDir) < 0.0f)
+		{
+			tri.v[0].normal = viewNormal;
+			tri.v[1].normal = viewNormal;
+			tri.v[2].normal = viewNormal;
 
-		rasterizeTriangle(tri, viewspacePos);
+			// mvp transformation
+			tri.v[0].position = mvp * t.v[0].position;
+			tri.v[1].position = mvp * t.v[1].position;
+			tri.v[2].position = mvp * t.v[2].position;
+			// Homogeneous division
+			tri.v[0].position.Homogeneous();
+			tri.v[1].position.Homogeneous();
+			tri.v[2].position.Homogeneous();
+			// Viewprot transformaton
+			for (auto& vert : tri.v)
+			{
+				vert.position.X = 0.5 * _width * (vert.position.X + 1.0f);
+				vert.position.Y = 0.5 * _height * (vert.position.Y + 1.0f);
+			}
+
+			rasterizeTriangle(tri, viewspacePos);
+		}
 	}
 }
 
@@ -144,8 +160,10 @@ void Rasterizer::rasterizeTriangle(const Triangle& tri, const vector<Vector4f>& 
 					auto interpolated_normal = alphaRevised * tri.v[0].normal + betaRevised * tri.v[1].normal + gammaRevised * tri.v[2].normal;
 					auto interpolated_color = alphaRevised * tri.v[0].vertexColor + betaRevised * tri.v[1].vertexColor + gammaRevised * tri.v[2].vertexColor;
 					auto interpolated_texcoords = alphaRevised * tri.v[0].textureCoordinate + betaRevised * tri.v[1].textureCoordinate + gammaRevised * tri.v[2].textureCoordinate;
-					auto interpolated_viewPos = alphaRevised * viewPos[0] + betaRevised * viewPos[1] + gammaRevised + viewPos[2];
-					
+					auto interpolated_viewPos = alphaRevised * viewPos[2] + betaRevised * viewPos[1] + gammaRevised + viewPos[0];
+					//auto interpolated_viewPos = alpha * viewPos[0] + beta * viewPos[1] + gamma + viewPos[2];
+
+					Vector4f c = Vector4f(interpolated_texcoords.X, interpolated_texcoords.Y, 0);
 					PixelShaderVarying pixelData(interpolated_viewPos, interpolated_color, math::Normalize(interpolated_normal), interpolated_texcoords);
 					auto pixelColor = _pixelShader(pixelData);
 					setDepth(i, j, zRevised);

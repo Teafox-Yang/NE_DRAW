@@ -129,24 +129,13 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Common.h" />
-    <ClInclude Include="framework.h" />
     <ClInclude Include="Screen.h" />
-    <ClInclude Include="MYRD.h" />
     <ClInclude Include="Rasterizer.h" />
-    <ClInclude Include="Resource.h" />
     <ClInclude Include="Shader.h" />
-    <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MYRD.cpp" />
     <ClCompile Include="Rasterizer.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ResourceCompile Include="MYRD.rc" />
-  </ItemGroup>
-  <ItemGroup>
-    <Image Include="MYRD.ico" />
-    <Image Include="small.ico" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

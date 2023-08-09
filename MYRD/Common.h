@@ -290,21 +290,9 @@ struct Triangle
 
     Triangle(const Vertex& a, const Vertex& b, const Vertex& c)
     {
-        Vector4f triNormal = getTriNormal(a.position, b.position, c.position);
         v[0] = a;
         v[1] = b;
         v[2] = c;
-        v[0].normal = triNormal;
-        v[1].normal = triNormal;
-        v[2].normal = triNormal;
-    }
-    
-    Vector4f getTriNormal(Vector4f a, Vector4f b, Vector4f c)
-    {
-        Vector4f AB = b - a;
-        Vector4f AC = c - a;
-        Vector4f normal = math::Normalize(math::Cross(AB, AC));
-        return normal;
     }
 
     void setVertex(int index, Vertex ver)
@@ -321,6 +309,7 @@ static Triangle GetTriangle(const Vertex* vertex, int a, int b, int c)
 {
     return Triangle(vertex[a], vertex[b], vertex[c]);
 }
+
 
 struct Light
 {
@@ -382,6 +371,14 @@ namespace algorithm
         return SameSide(P, A, B, C)
             && SameSide(P, B, C, A)
             && SameSide(P, C, A, B);
+    }
+
+    static Vector4f getTriNormal(Vector4f a, Vector4f b, Vector4f c)
+    {
+        Vector4f AB = b - a;
+        Vector4f BC = c - b;
+        Vector4f normal = math::Normalize(math::Cross(AB, BC));
+        return normal;
     }
 
     // get the BaryCentric weight of each vertex

@@ -34,7 +34,7 @@ public:
 
 	void setPixelShader(std::function<Vector4f(PixelShaderVarying)> pixelShader);
 
-	void drawPrimitives(vector<Triangle>& triangleList);
+	void drawTriangles(vector<Triangle>& triangleList);
 
 
 private:
