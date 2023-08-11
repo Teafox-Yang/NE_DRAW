@@ -316,6 +316,7 @@ struct Light
     Light() = default;
     Light(const Vector4f& pos, const Vector4f& inten) :
         position(pos), intensity(inten) {};
+
     Vector4f position;
     Vector4f intensity;
 };

@@ -1,2 +1,4 @@
-C:\Users\yangqixuan\Documents\GitProjects\MYRD\MYRD\MYRD.cpp;C:\Users\yangqixuan\Documents\GitProjects\MYRD\MYRD\x64\Release\MYRD.obj
-C:\Users\yangqixuan\Documents\GitProjects\MYRD\MYRD\Rasterizer.cpp;C:\Users\yangqixuan\Documents\GitProjects\MYRD\MYRD\x64\Release\Rasterizer.obj
+C:\Users\yangqixuan\Documents\GitProjects\NE_DRAW\MYRD\Camera.cpp;C:\Users\yangqixuan\Documents\GitProjects\NE_DRAW\MYRD\x64\Release\Camera.obj
+C:\Users\yangqixuan\Documents\GitProjects\NE_DRAW\MYRD\MYRD.cpp;C:\Users\yangqixuan\Documents\GitProjects\NE_DRAW\MYRD\x64\Release\MYRD.obj
+C:\Users\yangqixuan\Documents\GitProjects\NE_DRAW\MYRD\Renderer.cpp;C:\Users\yangqixuan\Documents\GitProjects\NE_DRAW\MYRD\x64\Release\Renderer.obj
+C:\Users\yangqixuan\Documents\GitProjects\NE_DRAW\MYRD\Texture.cpp;C:\Users\yangqixuan\Documents\GitProjects\NE_DRAW\MYRD\x64\Release\Texture.obj

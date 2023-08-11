@@ -8,6 +8,7 @@
 int screen_w, screen_h, screen_exit = 0;
 int screen_mx = 0, screen_my = 0, screen_mb = 0;
 int screen_keys[512];	// 当前键盘按下状态
+int mouse_delta;
 static HWND screen_handle = NULL;		// 主窗口 HWND
 static HDC screen_dc = NULL;			// 配套的 HDC
 static HBITMAP screen_hb = NULL;		// DIB
@@ -109,6 +110,7 @@ static LRESULT screen_events(HWND hWnd, UINT msg,
 	case WM_CLOSE: screen_exit = 1; break;
 	case WM_KEYDOWN: screen_keys[wParam & 511] = 1; break;
 	case WM_KEYUP: screen_keys[wParam & 511] = 0; break;
+	case WM_MOUSEWHEEL: mouse_delta = GET_WHEEL_DELTA_WPARAM(wParam);
 	default: return DefWindowProc(hWnd, msg, wParam, lParam);
 	}
 	return 0;

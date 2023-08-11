@@ -8,12 +8,13 @@ class PixelShaderVarying
 {
 public:
 	PixelShaderVarying() = default;
-	PixelShaderVarying(const Vector4f& viewPos, const Vector4f& col, const Vector4f& nor, const Vector2f& tc):
-		viewPos(viewPos), color(col), normal(nor), texCoords(tc)	{}
+	PixelShaderVarying(const Vector4f& viewPos, const Vector4f& col, const Vector4f& nor, const Vector2f& tc, const vector<Light>& li):
+		viewPos(viewPos), color(col), normal(nor), texCoords(tc), lights(li){}
 	Vector4f viewPos;
 	Vector4f color;
 	Vector4f normal;
 	Vector2f texCoords;
+	vector<Light> lights;
 };
 
 static Vector4f NormalPixelShader(const PixelShaderVarying& pixelData)
@@ -34,25 +35,19 @@ static Vector4f PhongPixelShader(const PixelShaderVarying& pixelData)
 	Vector4f kd = pixelData.color;
 	Vector4f ks = Vector4f(0.7937f);
 
-	Light l1 = Light(Vector4f(10.0f), Vector4f(500.0f));
-	Light l2 = Light(Vector4f(-20.0f, 20.0f, 0.0f), Vector4f(500.0f));
-
-	vector<Light> lights = { l1,l2};
-
 	float ambientIntensity = 10.0f;
-	Vector4f eyePos = Vector4f(0, 0, 0);
+	Vector4f eyePos = Vector4f(0.0f);
 
 	Vector4f color = pixelData.color;
-	Vector4f point = pixelData.viewPos;
-	//point = Vector4f(0);
+	Vector4f viewPint = pixelData.viewPos;
 	Vector4f normal = pixelData.normal;
 
 	Vector4f resultColor = Vector4f(0);
 
-	for (Light& light : lights)
+	for (const Light& light : pixelData.lights)
 	{
-		Vector4f lightDir = light.position - point;
-		Vector4f viewDir = eyePos - point;
+		Vector4f lightDir = light.position - viewPint;
+		Vector4f viewDir = eyePos - viewPint;
 		Vector4f hDir = math::Normalize(math::Normalize(lightDir) + math::Normalize(viewDir));
 		float lightDis = pow(lightDir.X, 2) + pow(lightDir.Y, 2) + pow(lightDir.Z, 2);
 		Vector4f lightIntensity = light.intensity / lightDis;

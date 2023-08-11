@@ -1,24 +1,17 @@
-﻿  Rasterizer.cpp
-G:\NE_DRAW\MYRD\Common.h(246,25): warning C4244: “return”: 从“double”转换到“float”，可能丢失数据
-G:\NE_DRAW\MYRD\Common.h(262,19): warning C4244: “参数”: 从“int”转换到“float”，可能丢失数据
-G:\NE_DRAW\MYRD\Common.h(262,18): warning C4244: “=”: 从“float”转换到“int”，可能丢失数据
-G:\NE_DRAW\MYRD\Common.h(263,19): warning C4244: “参数”: 从“int”转换到“float”，可能丢失数据
-G:\NE_DRAW\MYRD\Common.h(263,18): warning C4244: “=”: 从“float”转换到“int”，可能丢失数据
-G:\NE_DRAW\MYRD\Common.h(264,19): warning C4244: “参数”: 从“int”转换到“float”，可能丢失数据
-G:\NE_DRAW\MYRD\Common.h(264,18): warning C4244: “=”: 从“float”转换到“int”，可能丢失数据
-G:\NE_DRAW\MYRD\Common.h(413,22): warning C4244: “初始化”: 从“double”转换到“float”，可能丢失数据
-G:\NE_DRAW\MYRD\Common.h(421,42): warning C4244: “参数”: 从“double”转换到“const float”，可能丢失数据
-G:\NE_DRAW\MYRD\Common.h(421,67): warning C4244: “参数”: 从“double”转换到“const float”，可能丢失数据
-G:\NE_DRAW\MYRD\Common.h(470,30): warning C4244: “初始化”: 从“double”转换到“float”，可能丢失数据
-G:\NE_DRAW\MYRD\Common.h(470,23): warning C4244: “初始化”: 从“double”转换到“const float”，可能丢失数据
-G:\NE_DRAW\MYRD\Shader.h(57,18): warning C4244: “初始化”: 从“double”转换到“float”，可能丢失数据
-G:\NE_DRAW\MYRD\Shader.h(65,45): warning C4244: “参数”: 从“double”转换到“const float”，可能丢失数据
-G:\NE_DRAW\MYRD\Rasterizer.cpp(110,36): warning C4244: “=”: 从“double”转换到“float”，可能丢失数据
-G:\NE_DRAW\MYRD\Rasterizer.cpp(111,37): warning C4244: “=”: 从“double”转换到“float”，可能丢失数据
-G:\NE_DRAW\MYRD\Rasterizer.cpp(159,36): warning C4244: “=”: 从“double”转换到“float”，可能丢失数据
-G:\NE_DRAW\MYRD\Rasterizer.cpp(160,37): warning C4244: “=”: 从“double”转换到“float”，可能丢失数据
-G:\NE_DRAW\MYRD\Rasterizer.cpp(189,59): warning C4244: “参数”: 从“double”转换到“float”，可能丢失数据
-G:\NE_DRAW\MYRD\Rasterizer.cpp(189,43): warning C4244: “参数”: 从“double”转换到“float”，可能丢失数据
-G:\NE_DRAW\MYRD\Rasterizer.cpp(191,72): warning C4244: “参数”: 从“double”转换到“float”，可能丢失数据
-G:\NE_DRAW\MYRD\Rasterizer.cpp(191,56): warning C4244: “参数”: 从“double”转换到“float”，可能丢失数据
-  MYRD.vcxproj -> G:\NE_DRAW\x64\Debug\MYRD.exe
+﻿  MYRD.cpp
+C:\Users\yangqixuan\Documents\GitProjects\NE_DRAW\MYRD\Common.h(246,25): warning C4244: 'return': conversion from 'double' to 'float', possible loss of data
+C:\Users\yangqixuan\Documents\GitProjects\NE_DRAW\MYRD\Common.h(262,19): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\yangqixuan\Documents\GitProjects\NE_DRAW\MYRD\Common.h(262,18): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+C:\Users\yangqixuan\Documents\GitProjects\NE_DRAW\MYRD\Common.h(263,19): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\yangqixuan\Documents\GitProjects\NE_DRAW\MYRD\Common.h(263,18): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+C:\Users\yangqixuan\Documents\GitProjects\NE_DRAW\MYRD\Common.h(264,19): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\yangqixuan\Documents\GitProjects\NE_DRAW\MYRD\Common.h(264,18): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+C:\Users\yangqixuan\Documents\GitProjects\NE_DRAW\MYRD\Common.h(414,22): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\yangqixuan\Documents\GitProjects\NE_DRAW\MYRD\Common.h(422,42): warning C4244: 'argument': conversion from 'double' to 'const float', possible loss of data
+C:\Users\yangqixuan\Documents\GitProjects\NE_DRAW\MYRD\Common.h(422,67): warning C4244: 'argument': conversion from 'double' to 'const float', possible loss of data
+C:\Users\yangqixuan\Documents\GitProjects\NE_DRAW\MYRD\Common.h(471,30): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\yangqixuan\Documents\GitProjects\NE_DRAW\MYRD\Common.h(471,23): warning C4244: 'initializing': conversion from 'double' to 'const float', possible loss of data
+C:\Users\yangqixuan\Documents\GitProjects\NE_DRAW\MYRD\Shader.h(52,18): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\yangqixuan\Documents\GitProjects\NE_DRAW\MYRD\Shader.h(60,45): warning C4244: 'argument': conversion from 'double' to 'const float', possible loss of data
+C:\Users\yangqixuan\Documents\GitProjects\NE_DRAW\MYRD\Screen.h(37,9): warning C4838: conversion from 'int' to 'DWORD' requires a narrowing conversion
+  MYRD.vcxproj -> C:\Users\yangqixuan\Documents\GitProjects\NE_DRAW\x64\Debug\MYRD.exe
